@@ -96,27 +96,6 @@ def squares():
     return [i for i in xrange(11, 89) if 1 <= (i % 10) <= 8]
 
 
-def initial_board():
-    """Create a new board with the initial black and white positions filled."""
-    board = [OUTER] * 100
-    for i in squares():
-        board[i] = EMPTY
-    # The middle four squares should hold the initial piece positions.
-    board[44], board[45] = BLACK, WHITE
-    board[54], board[55] = WHITE, BLACK
-    return board
-
-
-def print_board(board):
-    """Get a string representation of the board."""
-    rep = ''
-    rep += '  %s\n' % ' '.join(map(str, range(1, 9)))
-    for row in xrange(1, 9):
-        begin, end = 10 * row + 1, 10 * row + 9
-        rep += '%d %s\n' % (row, ' '.join(board[begin:end]))
-    return rep
-
-
 # -----------------------------------------------------------------------------
 # <a id="playing"></a>
 ## Playing the game
@@ -184,18 +163,6 @@ def make_flips(move, player, board, direction):
         square += direction
 
 
-### Monitoring players
-
-class IllegalMoveError(Exception):
-    def __init__(self, player, move, board):
-        self.player = player
-        self.move = move
-        self.board = board
-
-    def __str__(self):
-        return '%s cannot move to square %d' % (PLAYERS[self.player], self.move)
-
-
 def legal_moves(player, board):
     """Get a list of all legal moves for player."""
     return [sq for sq in squares() if is_legal(sq, player, board)]
@@ -204,45 +171,6 @@ def legal_moves(player, board):
 def any_legal_move(player, board):
     """Can player make any moves?"""
     return any(is_legal(sq, player, board) for sq in squares())
-
-
-### Putting it all together
-
-# Each round consists of:
-#
-# - Get a move from the current player.
-# - Apply it to the board.
-# - Switch players.  If the game is over, get the final score.
-
-def play(black_strategy, white_strategy):
-    """Play a game of Othello and return the final board and score."""
-    board = initial_board()
-    player = BLACK
-    strategy = lambda who: black_strategy if who == BLACK else white_strategy
-    while player is not None:
-        move = get_move(strategy(player), player, board)
-        make_move(move, player, board)
-        player = next_player(board, player)
-    return board, score(BLACK, board)
-
-
-def next_player(board, prev_player):
-    """Which player should move next?  Returns None if no legal moves exist."""
-    opp = opponent(prev_player)
-    if any_legal_move(opp, board):
-        return opp
-    elif any_legal_move(prev_player, board):
-        return prev_player
-    return None
-
-
-def get_move(strategy, player, board):
-    """Call strategy(player, board) to get a move."""
-    copy = list(board)  # copy the board to prevent cheating
-    move = strategy(player, copy)
-    if not is_valid(move) or not is_legal(move, player, board):
-        raise IllegalMoveError(player, move, copy)
-    return move
 
 
 def score(player, board):
@@ -272,8 +200,10 @@ import random
 
 def random_strategy(player, board):
     """A strategy that always chooses a random legal move."""
-    return random.choice(legal_moves(player, board))
+    def strategy():
+        return random.choice(legal_moves(player, board))
 
+    return strategy
 
 # <a id="localmax"></a>
 ### Local maximization
