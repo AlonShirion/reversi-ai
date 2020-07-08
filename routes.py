@@ -5,7 +5,6 @@ from werkzeug.exceptions import HTTPException
 
 import othello
 
-companies = [{"id": 1, "name": "Company One"}, {"id": 2, "name": "Company Two"}]
 
 api = Flask(__name__)
 
@@ -34,9 +33,9 @@ def handle_exception(e):
 
 @api.route('/ai_play', methods=['POST'])
 def ai_play():
-    strategy = request.form.get('strategy').encode("utf-8")
-    color = request.form.get('color').encode("utf-8")
-    board = literal_eval(request.form.get('board').encode("utf-8"))
+    strategy = json.loads(json.dumps(request.get_json()['strategy'])).encode('utf8')
+    color = json.loads(json.dumps(request.get_json()['color'])).encode('utf8')
+    board = literal_eval(json.dumps(request.get_json()['board']))
 
     options = {'random': othello.random_strategy(color, board),
                'max-diff': othello.maximizer(othello.score, color, board),
@@ -54,9 +53,6 @@ def ai_play():
         result = result()
 
     return str(result)
-
-    # return 'Invalid startegy has been sent!'
-    # return json.dumps(companies)
 
 
 if __name__ == '__main__':
