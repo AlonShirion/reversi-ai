@@ -1,7 +1,11 @@
 # reversi-ai
 
-Need python 2.7
-pip install flask
+Requirements:
 
-run the project:
+python 2.7
+
+flask (pip install flask)
+
+### run the project:
+
 python routes.py
