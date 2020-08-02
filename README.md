@@ -1,11 +1,10 @@
 # reversi-ai
 
-Requirements:
-
-python 2.7
-
-flask (pip install flask)
+### Members
+Alon Shirion
 
 ### run the project:
+
+flask (pip install flask)
 
 python routes.py
