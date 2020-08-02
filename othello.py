@@ -1,60 +1,4 @@
-"""
-**Othello** is a turn-based two-player strategy board game.  The players take
-turns placing pieces--one player white and the other player black--on an 8x8
-board in such a way that captures some of the opponent's pieces, with the goal
-of finishing the game with more pieces of their color on the board.
-
-Every move must capture one more more of the opponent's pieces.  To capture,
-player A places a piece adjacent to one of player B's pieces so that there is a
-straight line (horizontal, vertical, or diagonal) of adjacent pieces that begins
-with one of player A's pieces, continues with one more more of player B's
-pieces, and ends with one of player A's pieces.
-
-For example, if Black places a piece on square (5, 1), he will capture all of
-Black's pieces between (5, 1) and (5, 6):
-
-      1 2 3 4 5 6 7 8      1 2 3 4 5 6 7 8
-    1 . . . . . . . .    1 . . . . . . . .
-    2 . . . . . . . .    2 . . . . . . . .
-    3 . . o @ . o . .    3 . . o @ . o . .
-    4 . . o o @ @ . .    4 . . o o @ @ . .
-    5 . o o o o @ . .    5 @ @ @ @ @ @ . .
-    6 . . . @ o . . .    6 . . . @ o . . .
-    7 . . . . . . . .    7 . . . . . . . .
-    8 . . . . . . . .    8 . . . . . . . .
-
-For more more information about the game (which is also known as Reversi)
-including detailed rules, see the entry on [Wikipedia][wiki].  Additionally,
-this implementation doesn't take into account some tournament-style Othello
-details, such as game time limits and a different indexing scheme.
-
-We will implement representations for the board and pieces and the mechanics of
-playing a game.  We will then explore several game-playing strategies.  There is
-a simple command-line program [provided](examples/othello/othello.html) for
-playing against the computer or comparing two strategies.
-
-Written by [Daniel Connelly](http://dhconnelly.com).  This implementation follows
-chapter 18 of Peter Norvig's "Paradigms of Artificial Intelligence".
-
-[wiki]: http://en.wikipedia.org/wiki/Reversi
-
-"""
-
 # -----------------------------------------------------------------------------
-## Table of contents
-
-# 1. [Board representation](#board)
-# 2. [Playing the game](#playing)
-# 3. [Strategies](#strategies)
-#     - [Random](#random)<br>
-#     - [Local maximization](#localmax)<br>
-#     - [Minimax search](#minimax)<br>
-#     - [Alpha-beta search](#alphabeta)<br>
-# 4. [Conclusion](#conclusion)
-
-
-# -----------------------------------------------------------------------------
-# <a id="board"></a>
 ## Board representation
 
 # We represent the board as a 100-element list, which includes each square on
@@ -63,14 +7,14 @@ chapter 18 of Peter Norvig's "Paradigms of Artificial Intelligence".
 # initial board contains four pieces in the center:
 
 #     ? ? ? ? ? ? ? ? ? ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . o @ . . . ?
-#     ? . . . @ o . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
-#     ? . . . . . . . . ?
+#     ? 0 0 0 0 0 0 0 0 ?
+#     ? 0 0 0 0 0 0 0 0 ?
+#     ? 0 0 0 0 0 0 0 0 ?
+#     ? 0 0 0 1 2 0 0 0 ?
+#     ? 0 0 0 2 1 0 0 0 ?
+#     ? 0 0 0 0 0 0 0 0 ?
+#     ? 0 0 0 0 0 0 0 0 ?
+#     ? 0 0 0 0 0 0 0 0 ?
 #     ? ? ? ? ? ? ? ? ? ?
 
 # This representation has two useful properties:
@@ -79,7 +23,7 @@ chapter 18 of Peter Norvig's "Paradigms of Artificial Intelligence".
 #    functions that convert between square locations and list indexes.
 # 2. Operations involving bounds checking are slightly simpler.
 
-# The outside edge is marked ?, empty squares are ., black is @, and white is o.
+# The outside edge is marked ?, empty squares are ., black is 2, and white is 1.
 # The black and white pieces represent the two players.
 EMPTY, BLACK, WHITE, OUTER = '0', '2', '1', '?'
 PIECES = (EMPTY, BLACK, WHITE, OUTER)
@@ -97,7 +41,6 @@ def squares():
 
 
 # -----------------------------------------------------------------------------
-# <a id="playing"></a>
 ## Playing the game
 
 # We need functions to get moves from players, check to make sure that the moves
@@ -187,7 +130,6 @@ def score(player, board):
 
 
 # -----------------------------------------------------------------------------
-# <a id="strategies"></a>
 ## Play strategies
 
 # <a id="random"></a>
@@ -205,7 +147,7 @@ def random_strategy(player, board):
 
     return strategy
 
-# <a id="localmax"></a>
+
 ### Local maximization
 
 # A more sophisticated strategy could look at every available move and evaluate
@@ -339,19 +281,7 @@ def minimax_searcher(depth, evaluate, player, board):
     return strategy
 
 
-# <a id="alphabeta"></a>
 ### Alpha-Beta search
-
-# Minimax is very effective, but it does too much work: it evaluates many search
-# trees that should be ignored.
-
-# Consider what happens when minimax is evaluating two moves, M1 and M2, on one
-# level of a search tree.  Suppose minimax determines that M1 can result in a
-# score of S.  While evaluating M2, if minimax finds a move in its subtree that
-# could result in a better score than S, the algorithm should immediately quit
-# evaluating M2: the opponent will force us to play M1 to avoid the higher score
-# resulting from M1, so we shouldn't waste time determining just how much better
-# M2 is than M1.
 
 # We need to keep track of two values:
 #
@@ -407,18 +337,3 @@ def alphabeta_searcher(depth, evaluate, player, board):
         return alphabeta(player, board, MIN_VALUE, MAX_VALUE, depth, evaluate)[1]
 
     return strategy
-
-# -----------------------------------------------------------------------------
-# <a id="conclusion"></a>
-## Conclusion
-
-# The strategies we've discussed are very general and are applicable to a broad
-# range of strategy games, such as Chess, Checkers, and Go.  More advanced
-# strategies for Othello exist that apply various gameplay heuristics; some of
-# these are discussed in "Paradigms of Artificial Intelligence Programming" by
-# Peter Norvig.
-#
-# See Wikipedia for more details on [minimax][mm] and [alpha-beta][ab] search.
-#
-# [mm]: http://en.wikipedia.org/wiki/Minimax
-# [ab]: http://en.wikipedia.org/wiki/Alpha-beta_pruning
