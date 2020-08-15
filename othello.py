@@ -132,7 +132,6 @@ def score(player, board):
 # -----------------------------------------------------------------------------
 ## Play strategies
 
-# <a id="random"></a>
 ### Random
 
 # The easiest strategy to implement simply picks a move at random.
@@ -213,7 +212,6 @@ def weighted_score(player, board):
     return total
 
 
-# <a id="minimax"></a>
 ### Minimax search
 
 # The maximizer strategies are very short-sighted, and a player who can consider
