@@ -1,7 +1,7 @@
 # reversi-ai
 
 ### Members
-Alon Shirion
+Alon Shirion, 
 Ofek Aziel
 
 ### run the project:
