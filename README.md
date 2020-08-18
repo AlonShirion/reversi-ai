@@ -3,7 +3,8 @@
 ### Members
 Alon Shirion, 
 Ofek Aziel,
-Amit Feldman
+Amit Feldman,
+Samuel Zerbib
 
 ### run the project:
 
